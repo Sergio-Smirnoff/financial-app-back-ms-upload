@@ -2,9 +2,11 @@ package com.financialapp.upload.controller;
 
 import com.financialapp.upload.model.dto.response.ApiResponse;
 import com.financialapp.upload.model.dto.response.FileUploadResponse;
+import com.financialapp.upload.model.dto.response.ProcessingReport;
 import com.financialapp.upload.model.entity.FileUpload;
 import com.financialapp.upload.model.enums.FileUploadStatus;
 import com.financialapp.upload.repository.FileUploadRepository;
+import com.financialapp.upload.service.ProcessingService;
 import com.financialapp.upload.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class FileUploadController {
 
     private final StorageService storageService;
     private final FileUploadRepository fileUploadRepository;
+    private final ProcessingService processingService;
 
     @Value("${minio.bucket.statements}")
     private String statementsBucket;
@@ -79,6 +82,23 @@ public class FileUploadController {
                     .body(ApiResponse.<FileUploadResponse>builder()
                             .success(false)
                             .message("Error uploading file: " + e.getMessage())
+                            .build());
+        }
+    }
+
+    @PostMapping("/files/{id}/process")
+    public ResponseEntity<ApiResponse<ProcessingReport>> processFile(
+            @PathVariable("id") Long fileId) {
+        log.info("Received request to process file ID: {}", fileId);
+        try {
+            ProcessingReport report = processingService.process(fileId);
+            return ResponseEntity.ok(ApiResponse.ok("File processed successfully", report));
+        } catch (Exception e) {
+            log.error("Error processing file ID: {}", fileId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<ProcessingReport>builder()
+                            .success(false)
+                            .message("Error processing file: " + e.getMessage())
                             .build());
         }
     }

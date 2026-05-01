@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public class TransactionRequest {
     private TransactionType type;
     private BigDecimal amount;
+    private Long accountId;
     private String currency;
     private Long categoryId;
     private String description;
