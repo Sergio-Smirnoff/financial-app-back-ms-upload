@@ -21,21 +21,43 @@ import java.util.Map;
 @Component
 public class GenericCsvParser implements StatementParser {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yy");
-
     @Override
     public List<ParsedTransaction> parse(InputStream is, Map<String, String> context) {
         List<ParsedTransaction> transactions = new ArrayList<>();
+        
+        int dateCol = Integer.parseInt(context.getOrDefault("dateCol", "0"));
+        int descCol = Integer.parseInt(context.getOrDefault("descCol", "1"));
+        int debitCol = Integer.parseInt(context.getOrDefault("debitCol", "2"));
+        int creditCol = Integer.parseInt(context.getOrDefault("creditCol", "3"));
+        String dateFormat = context.getOrDefault("dateFormat", "MM/dd/yy");
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+
         try (CSVReader reader = new CSVReader(new InputStreamReader(is))) {
             String[] line;
+            boolean firstLine = true;
             while ((line = reader.readNext()) != null) {
-                if (line.length < 4) continue;
+                // Skip header if it looks like headers (non-numeric in amount cols)
+                if (firstLine) {
+                    firstLine = false;
+                    try {
+                        new BigDecimal(line[debitCol].replaceAll("[^0-9.-]", ""));
+                    } catch (Exception e) {
+                        continue; // Likely header
+                    }
+                }
 
                 try {
-                    LocalDate date = LocalDate.parse(line[0], DATE_FORMATTER);
-                    String description = line[1];
-                    BigDecimal debit = new BigDecimal(line[2]);
-                    BigDecimal credit = new BigDecimal(line[3]);
+                    if (line.length <= Math.max(Math.max(dateCol, descCol), Math.max(debitCol, creditCol))) continue;
+
+                    LocalDate date = LocalDate.parse(line[dateCol].trim(), formatter);
+                    String description = line[descCol].trim();
+                    
+                    String debitStr = line[debitCol].replaceAll("[^0-9.-]", "");
+                    String creditStr = line[creditCol].replaceAll("[^0-9.-]", "");
+                    
+                    BigDecimal debit = debitStr.isEmpty() ? BigDecimal.ZERO : new BigDecimal(debitStr);
+                    BigDecimal credit = creditStr.isEmpty() ? BigDecimal.ZERO : new BigDecimal(creditStr);
 
                     BigDecimal amount;
                     TransactionType type;
@@ -44,7 +66,7 @@ public class GenericCsvParser implements StatementParser {
                         amount = credit;
                         type = TransactionType.INCOME;
                     } else {
-                        amount = debit;
+                        amount = debit.abs();
                         type = TransactionType.EXPENSE;
                     }
 
@@ -52,7 +74,7 @@ public class GenericCsvParser implements StatementParser {
                             .date(date)
                             .description(description)
                             .amount(amount)
-                            .currency("ARS") // Default for this CSV
+                            .currency("ARS") // Default
                             .type(type)
                             .build());
                 } catch (Exception e) {

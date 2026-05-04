@@ -2,10 +2,13 @@ package com.financialapp.upload.config;
 
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@lombok.Getter
+@lombok.Setter
 public class MinioConfig {
 
     @Value("${minio.endpoint}")
@@ -16,6 +19,12 @@ public class MinioConfig {
 
     @Value("${minio.secret-key}")
     private String secretKey;
+
+    @Value("${minio.bucket.statements}")
+    private String statementsBucket;
+
+    @Value("${minio.bucket.receipts}")
+    private String receiptsBucket;
 
     @Bean
     public MinioClient minioClient() {
