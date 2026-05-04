@@ -18,12 +18,19 @@ class GenericCsvParserTest {
     private final GenericCsvParser parser = new GenericCsvParser();
 
     @Test
-    void shouldParseCsvCorrectly() {
+    void shouldParseCsvWithAutoDetectDateFormat() {
         String csv = "04/28/26,Compra / Venta de Titulo,302361.77,0.0,\n" +
                      "04/24/26,CREDITO POR RESCATE FCI,0.0,399988.79,";
         InputStream is = new ByteArrayInputStream(csv.getBytes());
 
-        List<ParsedTransaction> result = parser.parse(is, new HashMap<>());
+        HashMap<String, String> context = new HashMap<>();
+        context.put("dateCol", "0");
+        context.put("descCol", "1");
+        context.put("expenseCol", "2");
+        context.put("incomeCol", "3");
+        // No dateFormat provided, should auto-detect MM/dd/yy
+
+        List<ParsedTransaction> result = parser.parse(is, context);
 
         assertThat(result).hasSize(2);
         

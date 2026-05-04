@@ -24,11 +24,26 @@ public class StatementImport {
     @Column(name = "file_type", nullable = false, length = 50)
     private String fileType;
 
-    @Column(name = "account_number", nullable = false, length = 100)
+    @Column(name = "account_number", length = 100)
     private String accountNumber;
 
-    @Column(name = "period_key", nullable = false, length = 50)
+    @Column(name = "period_key", length = 50)
     private String periodKey;
+
+    @Column(name = "original_name")
+    private String originalName;
+
+    @Column(name = "file_hash", length = 64)
+    private String fileHash;
+
+    @Column(name = "bank_id")
+    private Long bankId;
+
+    @Column(name = "account_id")
+    private Long accountId;
+
+    @Column(name = "card_id")
+    private Long cardId;
 
     @Column(name = "minio_path", nullable = false, length = 500)
     private String minioPath;

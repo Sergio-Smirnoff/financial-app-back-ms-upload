@@ -1,7 +1,9 @@
 package com.financialapp.upload.service;
 
 import com.financialapp.upload.model.dto.ParsedTransaction;
+import com.financialapp.upload.model.enums.FileType;
 import com.financialapp.upload.parser.GenericCsvParser;
+import com.financialapp.upload.parser.ICBCBankMovementsPdfParser;
 import com.financialapp.upload.parser.ICBCVisaPdfParser;
 import com.financialapp.upload.parser.StatementParser;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +18,15 @@ import java.util.Map;
 public class ParsingService {
 
     private final GenericCsvParser csvParser;
-    private final ICBCVisaPdfParser icbcParser;
+    private final ICBCVisaPdfParser icbcVisaParser;
+    private final ICBCBankMovementsPdfParser icbcBankParser;
 
-    public List<ParsedTransaction> parse(InputStream is, String originalName, Map<String, String> context) {
-        StatementParser parser;
-        if (originalName.toLowerCase().endsWith(".csv")) {
-            parser = csvParser;
-        } else if (originalName.toLowerCase().endsWith(".pdf")) {
-            parser = icbcParser;
-        } else {
-            throw new IllegalArgumentException("Unsupported file format: " + originalName);
-        }
+    public List<ParsedTransaction> parse(InputStream is, FileType type, Map<String, String> context) {
+        StatementParser parser = switch (type) {
+            case CSV -> csvParser;
+            case VISA_PDF -> icbcVisaParser;
+            case BANK_PDF -> icbcBankParser;
+        };
         return parser.parse(is, context);
     }
 }
