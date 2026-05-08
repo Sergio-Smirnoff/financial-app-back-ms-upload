@@ -4,6 +4,7 @@ import com.financialapp.upload.model.dto.ParsedTransaction;
 import com.financialapp.upload.model.enums.TransactionType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class ICBCVisaPdfParser implements StatementParser {
     @Override
     public List<ParsedTransaction> parse(InputStream is, Map<String, String> context) {
         List<ParsedTransaction> transactions = new ArrayList<>();
-        try (PDDocument document = Loader.loadPDF(is.readAllBytes())) {
+        try (PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(is))) {
             PDFTextStripper stripper = new PDFTextStripper();
             String text = stripper.getText(document);
 
