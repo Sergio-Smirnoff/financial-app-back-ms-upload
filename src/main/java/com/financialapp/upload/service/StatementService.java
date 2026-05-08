@@ -8,9 +8,11 @@ import com.financialapp.upload.model.dto.request.TransactionMappingRequest;
 import com.financialapp.upload.model.dto.request.TransactionRequest;
 import com.financialapp.upload.model.dto.response.*;
 import com.financialapp.upload.model.entity.StatementImport;
+import com.financialapp.upload.model.entity.UploadSession;
 import com.financialapp.upload.model.enums.FileType;
 import com.financialapp.upload.model.enums.ImportStatus;
 import com.financialapp.upload.repository.StatementImportRepository;
+import com.financialapp.upload.repository.UploadSessionRepository;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +34,17 @@ public class StatementService {
     private final ParsingService parsingService;
     private final FinancesClient financesClient;
     private final StatementImportRepository repository;
+    private final UploadSessionRepository sessionRepository;
 
     public StatementPreviewResponse previewPdf(MultipartFile file, FileType fileType, Long userId) {
         try {
             String tempKey = "temp/" + UUID.randomUUID() + "/" + file.getOriginalFilename();
             storageService.store(tempKey, file.getInputStream(), file.getSize(), file.getContentType());
+
+            sessionRepository.save(UploadSession.builder()
+                    .tempKey(tempKey)
+                    .userId(userId)
+                    .build());
 
             List<ParsedTransaction> transactions = parsingService.parse(file.getInputStream(), file.getOriginalFilename(), Collections.emptyMap());
             
@@ -61,6 +69,11 @@ public class StatementService {
             String tempKey = "temp/" + UUID.randomUUID() + "/" + file.getOriginalFilename();
             storageService.store(tempKey, file.getInputStream(), file.getSize(), file.getContentType());
 
+            sessionRepository.save(UploadSession.builder()
+                    .tempKey(tempKey)
+                    .userId(userId)
+                    .build());
+
             try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
                 String[] headers = reader.readNext();
                 List<List<String>> rows = new ArrayList<>();
@@ -83,6 +96,7 @@ public class StatementService {
     }
 
     public StatementConfirmResponse confirmPdf(StatementConfirmRequest request, Long userId) {
+        validateSession(request.getTempKey(), userId);
         try {
             int successCount = 0;
             if (request.getMappings() != null && !request.getMappings().isEmpty()) {
@@ -107,6 +121,7 @@ public class StatementService {
     }
 
     public CsvImportResponse confirmCsv(CsvConfirmRequest request, Long userId) {
+        validateSession(request.getTempKey(), userId);
         try {
             int successCount = 0;
             if (request.getMappings() != null && !request.getMappings().isEmpty()) {
@@ -206,5 +221,15 @@ public class StatementService {
                 .filter(i -> i.getUserId().equals(userId))
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .toList();
+    }
+
+    private void validateSession(String tempKey, Long userId) {
+        UploadSession session = sessionRepository.findById(tempKey)
+                .orElseThrow(() -> new RuntimeException("Upload session not found or expired"));
+        if (!session.getUserId().equals(userId)) {
+            log.error("Security alert: User {} tried to hijack upload session {} owned by user {}", 
+                    userId, tempKey, session.getUserId());
+            throw new RuntimeException("Unauthorized: You do not own this upload session");
+        }
     }
 }
