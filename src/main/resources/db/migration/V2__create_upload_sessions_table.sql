@@ -1,0 +1,5 @@
+CREATE TABLE upload_sessions (
+    temp_key VARCHAR(255) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
