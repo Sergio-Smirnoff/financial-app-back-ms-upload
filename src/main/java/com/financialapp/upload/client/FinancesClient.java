@@ -16,7 +16,6 @@ public interface FinancesClient {
     @PostMapping("/api/v1/finances/transactions")
     ApiResponse<Void> createTransaction(
             @RequestHeader("X-User-Id") Long userId,
-            @RequestParam("bypassBalance") boolean bypassBalance,
             @RequestBody TransactionRequest request);
 
     @PostMapping("/api/v1/finances/transactions/duplicates-check")

@@ -46,7 +46,7 @@ public class StatementService {
                     .userId(userId)
                     .build());
 
-            List<ParsedTransaction> transactions = parsingService.parse(file.getInputStream(), file.getOriginalFilename(), Collections.emptyMap());
+            List<ParsedTransaction> transactions = parsingService.parse(file.getInputStream(), fileType, Collections.emptyMap());
             
             BigDecimal total = transactions.stream()
                     .map(ParsedTransaction::getAmount)
@@ -103,8 +103,7 @@ public class StatementService {
                 successCount = processMappings(request.getMappings(), request.getAccountId(), userId);
             } else {
                 InputStream is = storageService.retrieve(request.getTempKey());
-                String fileName = request.getTempKey().substring(request.getTempKey().lastIndexOf("/") + 1);
-                List<ParsedTransaction> transactions = parsingService.parse(is, fileName, Collections.emptyMap());
+                List<ParsedTransaction> transactions = parsingService.parse(is, request.getFileType(), Collections.emptyMap());
                 successCount = processParsedTransactions(transactions, request.getAccountId(), userId);
             }
 
@@ -135,7 +134,7 @@ public class StatementService {
                 context.put("creditCol", String.valueOf(request.getCreditCol()));
                 context.put("dateFormat", request.getDateFormat() != null ? request.getDateFormat() : "MM/dd/yy");
                 
-                List<ParsedTransaction> transactions = parsingService.parse(is, "file.csv", context);
+                List<ParsedTransaction> transactions = parsingService.parse(is, request.getFileType(), context);
                 successCount = processParsedTransactions(transactions, request.getAccountId(), userId);
             }
 
