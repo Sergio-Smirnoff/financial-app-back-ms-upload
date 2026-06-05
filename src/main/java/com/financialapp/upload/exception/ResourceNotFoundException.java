@@ -1,7 +1,10 @@
 package com.financialapp.upload.exception;
 
-public class ResourceNotFoundException extends RuntimeException {
+import com.financialapp.commons.core.error.DomainException;
+
+public class ResourceNotFoundException extends DomainException {
+
     public ResourceNotFoundException(String message) {
-        super(message);
+        super(DomainError.RESOURCE_NOT_FOUND, message);
     }
 }

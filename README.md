@@ -32,7 +32,11 @@ All paths are under `/api/v1/upload`. `X-User-Id` is injected by the gateway —
 | `POST` | `/csv/confirm` | JSON `CsvConfirmRequest` — `tempKey`, `accountId`, `dateCol`, `descCol`, `debitCol`, `creditCol`, `dateFormat`, `mappings[]` | `CsvImportResponse` — `importId`, `status`, `importedCount` |
 | `GET`  | `/history` | — | `StatementImport[]` for the authenticated user, newest first |
 
-All responses use the platform envelope: `ApiResponse<T>` (`success`, `message`, `data`, `errors`, `timestamp`).
+All responses use the shared envelope `{ status, title, code, message, data }` from `commons-core`
+(built from `financial-app-parent`). `code` appears only on errors with the `DomainError` slug
+(`invalid_file`, `parse_failed`, `file_too_large`, `business_rule_violation`, `downstream_error`,
+`resource_not_found`). Errors are rendered by `GlobalExceptionHandler extends ApiExceptionHandler`
+(commons-web); endpoints declare throwable codes with `@ApiErrorCodes`.
 
 ---
 
@@ -83,7 +87,6 @@ back/ms-upload/src/main/java/com/financialapp/upload/
 │   │   │   ├── TransactionMappingRequest.java  date, description, amount, currency, type, categoryId
 │   │   │   └── TransactionRequest.java         forwarded to ms-finances
 │   │   └── response/
-│   │       ├── ApiResponse.java
 │   │       ├── BatchImportResponse.java
 │   │       ├── ConfirmResponse.java
 │   │       ├── CsvImportResponse.java          importId, status, importedCount

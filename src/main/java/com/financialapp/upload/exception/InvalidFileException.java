@@ -1,7 +1,10 @@
 package com.financialapp.upload.exception;
 
-public class InvalidFileException extends RuntimeException {
+import com.financialapp.commons.core.error.DomainException;
+
+public class InvalidFileException extends DomainException {
+
     public InvalidFileException(String message) {
-        super(message);
+        super(DomainError.INVALID_FILE, message);
     }
 }

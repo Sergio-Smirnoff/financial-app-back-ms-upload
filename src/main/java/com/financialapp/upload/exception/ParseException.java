@@ -1,10 +1,14 @@
 package com.financialapp.upload.exception;
 
-public class ParseException extends RuntimeException {
+import com.financialapp.commons.core.error.DomainException;
+
+public class ParseException extends DomainException {
+
     public ParseException(String message) {
-        super(message);
+        super(DomainError.PARSE_FAILED, message);
     }
+
     public ParseException(String message, Throwable cause) {
-        super(message, cause);
+        super(DomainError.PARSE_FAILED, message, cause);
     }
 }

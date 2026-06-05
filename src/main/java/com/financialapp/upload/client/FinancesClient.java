@@ -1,7 +1,7 @@
 package com.financialapp.upload.client;
 
 import com.financialapp.upload.model.dto.request.TransactionRequest;
-import com.financialapp.upload.model.dto.response.ApiResponse;
+import com.financialapp.commons.core.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

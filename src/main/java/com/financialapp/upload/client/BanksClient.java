@@ -1,6 +1,6 @@
 package com.financialapp.upload.client;
 
-import com.financialapp.upload.model.dto.response.ApiResponse;
+import com.financialapp.commons.core.response.ApiResponse;
 import com.financialapp.upload.model.dto.request.CardExpenseImportRequest;
 import com.financialapp.upload.model.dto.request.CardExpenseCreateRequest;
 import com.financialapp.upload.model.dto.response.BatchImportResponse;
