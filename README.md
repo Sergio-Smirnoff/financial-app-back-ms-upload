@@ -179,4 +179,14 @@ mvn spring-boot:run
 http://localhost:8085/swagger-ui.html
 ```
 
+## CI/CD
+
+| Workflow | Trigger | Does |
+|---|---|---|
+| `ci.yml` | PRs; push to develop/master | tests + docker build via shared `backend-ci.yml` |
+| `docker-publish.yml` | push to master; `v*` tags | GHCR publish: `latest`, `sha-*`, semver on tags |
+| `release.yml` | manual (bump dropdown) | next `vX.Y.Z` tag + Release + versioned publish |
+
+Reusable workflows live in the root repo `Sergio-Smirnoff/financial-app`.
+
 > Full design: `docs/specs/services/ms-upload.md` (parent workspace).
