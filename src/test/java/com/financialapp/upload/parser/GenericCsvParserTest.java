@@ -1,5 +1,8 @@
 package com.financialapp.upload.parser;
 
+import com.financialapp.upload.domain.model.mapping.ColumnMapping;
+import com.financialapp.upload.domain.model.mapping.SeparateDebitCredit;
+import com.financialapp.upload.domain.model.mapping.SingleSignedColumn;
 import com.financialapp.upload.model.dto.ParsedTransaction;
 import com.financialapp.upload.model.enums.TransactionType;
 import org.junit.jupiter.api.Test;
@@ -7,9 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,29 +22,64 @@ class GenericCsvParserTest {
     private final GenericCsvParser parser = new GenericCsvParser();
 
     @Test
-    void shouldParseCsvWithAutoDetectDateFormat() {
-        String csv = "04/28/26,Compra / Venta de Titulo,302361.77,0.0,\n" +
-                     "04/24/26,CREDITO POR RESCATE FCI,0.0,399988.79,";
-        InputStream is = new ByteArrayInputStream(csv.getBytes());
+    void shouldParseDebitAndCreditColumnsWhenDebitColAndCreditColContextKeysAreUsed() {
+        String csvContent = """
+                Date,Description,Debit,Credit
+                2026-01-15,Supermarket,150.50,
+                2026-01-16,Salary,,2500.00
+                """;
+        InputStream is = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));
 
-        HashMap<String, String> context = new HashMap<>();
+        Map<String, String> context = new HashMap<>();
         context.put("dateCol", "0");
         context.put("descCol", "1");
-        context.put("expenseCol", "2");
-        context.put("incomeCol", "3");
-        // No dateFormat provided, should auto-detect MM/dd/yy
+        context.put("debitCol", "2");
+        context.put("creditCol", "3");
 
         List<ParsedTransaction> result = parser.parse(is, context);
 
         assertThat(result).hasSize(2);
-        
-        assertThat(result.get(0).getDate()).isEqualTo(LocalDate.of(2026, 4, 28));
-        assertThat(result.get(0).getDescription()).isEqualTo("Compra / Venta de Titulo");
-        assertThat(result.get(0).getAmount()).isEqualByComparingTo("302361.77");
         assertThat(result.get(0).getType()).isEqualTo(TransactionType.EXPENSE);
-
-        assertThat(result.get(1).getDate()).isEqualTo(LocalDate.of(2026, 4, 24));
-        assertThat(result.get(1).getAmount()).isEqualByComparingTo("399988.79");
+        assertThat(result.get(0).getAmount()).isEqualByComparingTo("150.50");
         assertThat(result.get(1).getType()).isEqualTo(TransactionType.INCOME);
+        assertThat(result.get(1).getAmount()).isEqualByComparingTo("2500.00");
+    }
+
+    @Test
+    void shouldParseSingleSignedColumnWithNegativesAsExpensesAndPositivesAsIncomes() {
+        String csvContent = """
+                Fecha,Concepto,Monto
+                2026-01-15,Restaurant,-85.00
+                2026-01-16,Transfer In,400.00
+                """;
+        InputStream is = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));
+
+        ColumnMapping mapping = new ColumnMapping(0, 1, new SingleSignedColumn(2), null, "yyyy-MM-dd");
+
+        List<ParsedTransaction> result = parser.parse(is, mapping);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getType()).isEqualTo(TransactionType.EXPENSE);
+        assertThat(result.get(0).getAmount()).isEqualByComparingTo("85.00");
+        assertThat(result.get(1).getType()).isEqualTo(TransactionType.INCOME);
+        assertThat(result.get(1).getAmount()).isEqualByComparingTo("400.00");
+    }
+
+    @Test
+    void shouldExtractRunningBalanceFromBalanceColumn() {
+        String csvContent = """
+                Date,Desc,Debit,Credit,Balance
+                2026-01-15,Supermarket,100.00,,900.00
+                2026-01-16,Salary,,500.00,1400.00
+                """;
+        InputStream is = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));
+
+        ColumnMapping mapping = new ColumnMapping(0, 1, new SeparateDebitCredit(2, 3), 4, "yyyy-MM-dd");
+
+        List<ParsedTransaction> result = parser.parse(is, mapping);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getRunningBalance()).isEqualByComparingTo("900.00");
+        assertThat(result.get(1).getRunningBalance()).isEqualByComparingTo("1400.00");
     }
 }

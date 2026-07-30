@@ -19,4 +19,5 @@ public class ParsedTransaction {
     private BigDecimal amount;
     private String currency;
     private TransactionType type;
+    private BigDecimal runningBalance;
 }

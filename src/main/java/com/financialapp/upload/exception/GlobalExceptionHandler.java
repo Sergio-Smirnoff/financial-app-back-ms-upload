@@ -42,4 +42,28 @@ public class GlobalExceptionHandler extends ApiExceptionHandler {
         HttpStatus status = ex.status() > 0 ? HttpStatus.valueOf(ex.status()) : HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(status).body(ApiResponse.failure(status, code, message, null));
     }
+
+    @ExceptionHandler(com.financialapp.upload.domain.exception.DuplicateImportException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateImport(com.financialapp.upload.domain.exception.DuplicateImportException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.failure(
+                HttpStatus.CONFLICT, "duplicate_import", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(com.financialapp.upload.domain.exception.ImportAlreadyUndoneException.class)
+    public ResponseEntity<ApiResponse<Void>> handleImportAlreadyUndone(com.financialapp.upload.domain.exception.ImportAlreadyUndoneException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.failure(
+                HttpStatus.CONFLICT, "import_already_undone", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(com.financialapp.upload.domain.exception.ImportRunNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleImportRunNotFound(com.financialapp.upload.domain.exception.ImportRunNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(
+                HttpStatus.NOT_FOUND, "resource_not_found", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(com.financialapp.upload.domain.exception.DomainException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDomainException(com.financialapp.upload.domain.exception.DomainException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(
+                HttpStatus.BAD_REQUEST, "business_rule_violation", ex.getMessage(), null));
+    }
 }

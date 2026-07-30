@@ -9,6 +9,8 @@ import java.util.List;
 public class StatementConfirmRequest {
     private String tempKey;
     private Long accountId;
+    private String bankNumber;
+    private String accountCbu;
     private FileType fileType;
     private List<TransactionMappingRequest> mappings;
 }
