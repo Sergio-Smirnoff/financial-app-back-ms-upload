@@ -68,4 +68,12 @@ public class ImportRunRepositoryImpl implements ImportRunRepository {
         return jpaRepository.findFirstByUserIdAndAccountCbuAndStatusInOrderByCreatedAtDesc(
                 userId.value(), accountCbu.value(), statuses).map(mapper::toDomain);
     }
+
+    @Override
+    public List<ImportRun> findAllCompletedOrPartial() {
+        List<String> statuses = List.of(ImportRunStatus.COMPLETED.name(), ImportRunStatus.PARTIAL.name());
+        return jpaRepository.findByStatusIn(statuses).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

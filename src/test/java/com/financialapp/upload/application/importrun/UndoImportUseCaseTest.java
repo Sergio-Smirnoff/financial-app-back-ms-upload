@@ -70,6 +70,7 @@ class UndoImportUseCaseTest {
                 .markCompleted(List.of(101L, 102L), 0, null);
 
         when(importRunRepository.findByIdOwnedBy(runId, userId)).thenReturn(Optional.of(run));
+        doNothing().when(transactionRecorderPort).deleteTransaction(1L, 101L);
         doThrow(new RuntimeException("Transaction not found")).when(transactionRecorderPort).deleteTransaction(1L, 102L);
 
         UndoImport.UndoResult result = useCase.execute(new UndoImportCommand(userId, runId));

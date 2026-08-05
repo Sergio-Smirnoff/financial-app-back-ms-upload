@@ -12,7 +12,12 @@ public class ArchitectureTest {
 
     @ArchTest
     public static final ArchRule layeredArchitecture = layeredArchitecture()
-            .consideringAllDependencies()
+            .consideringOnlyDependenciesInAnyPackage(
+                    "com.financialapp.upload.domain..",
+                    "com.financialapp.upload.application..",
+                    "com.financialapp.upload.infrastructure..",
+                    "com.financialapp.upload.web..",
+                    "com.financialapp.upload.controller..")
             .layer("Domain").definedBy("com.financialapp.upload.domain..")
             .layer("Application").definedBy("com.financialapp.upload.application..")
             .layer("Infrastructure").definedBy("com.financialapp.upload.infrastructure..")

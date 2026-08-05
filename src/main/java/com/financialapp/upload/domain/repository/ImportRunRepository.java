@@ -24,4 +24,6 @@ public interface ImportRunRepository {
     Optional<ImportRun> findByTransactionId(long transactionId);
 
     Optional<ImportRun> findLatestCompletedOrPartialByAccount(UserId userId, Cbu accountCbu);
+
+    List<ImportRun> findAllCompletedOrPartial();
 }

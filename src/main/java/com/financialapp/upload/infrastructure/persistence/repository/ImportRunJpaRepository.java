@@ -22,4 +22,6 @@ public interface ImportRunJpaRepository extends JpaRepository<ImportRunJpaEntity
 
     Optional<ImportRunJpaEntity> findFirstByUserIdAndAccountCbuAndStatusInOrderByCreatedAtDesc(
             Long userId, String accountCbu, List<String> statuses);
+
+    List<ImportRunJpaEntity> findByStatusIn(List<String> statuses);
 }
