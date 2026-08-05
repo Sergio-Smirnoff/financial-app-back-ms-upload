@@ -1,4 +1,5 @@
 package com.financialapp.upload.model.dto.request;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.financialapp.upload.model.enums.FileType;
 import lombok.Data;

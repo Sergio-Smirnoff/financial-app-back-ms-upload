@@ -1,4 +1,5 @@
 package com.financialapp.upload.application.importrun;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.financialapp.upload.application.importrun.impl.ConfirmImportUseCaseImpl;
 import com.financialapp.upload.domain.common.model.*;

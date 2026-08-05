@@ -1,7 +1,7 @@
 package com.financialapp.upload.domain.model.importrun;
 
 import com.financialapp.upload.domain.common.model.BankNumber;
-import com.financialapp.upload.domain.common.model.Cbu;
+import com.financialapp.commons.core.domain.model.Cbu;
 import com.financialapp.upload.domain.common.model.DateRange;
 import com.financialapp.upload.domain.common.model.UserId;
 import com.financialapp.upload.domain.exception.ImportAlreadyUndoneException;

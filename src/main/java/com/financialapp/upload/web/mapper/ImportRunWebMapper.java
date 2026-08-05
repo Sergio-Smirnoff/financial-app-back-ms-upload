@@ -1,4 +1,5 @@
 package com.financialapp.upload.web.mapper;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.financialapp.upload.domain.model.importrun.ImportRun;
 import com.financialapp.upload.domain.model.importrun.ImportRunStatus;

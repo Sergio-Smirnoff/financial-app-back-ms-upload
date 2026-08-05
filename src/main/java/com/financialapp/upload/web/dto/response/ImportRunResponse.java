@@ -1,4 +1,5 @@
 package com.financialapp.upload.web.dto.response;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.financialapp.upload.domain.model.importrun.ReconciliationResult;
 import lombok.AllArgsConstructor;

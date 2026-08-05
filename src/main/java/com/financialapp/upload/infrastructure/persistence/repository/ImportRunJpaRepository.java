@@ -1,4 +1,5 @@
 package com.financialapp.upload.infrastructure.persistence.repository;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.financialapp.upload.infrastructure.persistence.entity.ImportRunJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,7 +3,7 @@ package com.financialapp.upload.infrastructure.persistence.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.financialapp.upload.domain.common.model.BankNumber;
-import com.financialapp.upload.domain.common.model.Cbu;
+import com.financialapp.commons.core.domain.model.Cbu;
 import com.financialapp.upload.domain.common.model.DateRange;
 import com.financialapp.upload.domain.common.model.UserId;
 import com.financialapp.upload.domain.model.importrun.*;

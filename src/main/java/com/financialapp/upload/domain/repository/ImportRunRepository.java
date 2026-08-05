@@ -1,6 +1,6 @@
 package com.financialapp.upload.domain.repository;
 
-import com.financialapp.upload.domain.common.model.Cbu;
+import com.financialapp.commons.core.domain.model.Cbu;
 import com.financialapp.upload.domain.common.model.UserId;
 import com.financialapp.upload.domain.model.importrun.FileHash;
 import com.financialapp.upload.domain.model.importrun.ImportRun;

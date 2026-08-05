@@ -1,4 +1,5 @@
 package com.financialapp.upload.domain.exception;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 public class InvalidCbuException extends DomainException {
 

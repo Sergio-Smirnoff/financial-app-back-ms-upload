@@ -1,4 +1,5 @@
 package com.financialapp.upload.infrastructure.persistence.entity;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -3,7 +3,7 @@ package com.financialapp.upload.controller;
 import com.financialapp.commons.core.response.ApiResponse;
 import com.financialapp.commons.web.openapi.ApiErrorCodes;
 import com.financialapp.upload.domain.common.model.BankNumber;
-import com.financialapp.upload.domain.common.model.Cbu;
+import com.financialapp.commons.core.domain.model.Cbu;
 import com.financialapp.upload.domain.common.model.UserId;
 import com.financialapp.upload.exception.DomainError;
 import com.financialapp.upload.domain.exception.ImportRunNotFoundException;

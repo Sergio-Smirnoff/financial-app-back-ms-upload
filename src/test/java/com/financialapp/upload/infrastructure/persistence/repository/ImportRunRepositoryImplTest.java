@@ -1,4 +1,5 @@
 package com.financialapp.upload.infrastructure.persistence.repository;
+import com.financialapp.commons.core.domain.model.Cbu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.financialapp.upload.domain.common.model.*;
