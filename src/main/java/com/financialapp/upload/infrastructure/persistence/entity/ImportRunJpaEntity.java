@@ -52,6 +52,7 @@ public class ImportRunJpaEntity {
     @Column(name = "skipped_count", nullable = false)
     private int skippedCount;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "reconciliation", columnDefinition = "jsonb")
     private String reconciliationJson;
 
