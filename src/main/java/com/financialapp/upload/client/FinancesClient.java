@@ -1,12 +1,10 @@
 package com.financialapp.upload.client;
 
-import com.financialapp.upload.model.dto.request.TransactionRequest;
 import com.financialapp.commons.core.response.ApiResponse;
+import com.financialapp.upload.model.dto.request.TransactionRequest;
+import com.financialapp.upload.model.dto.response.CreatedTransactionResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,9 +12,14 @@ import java.util.List;
 public interface FinancesClient {
 
     @PostMapping("/api/v1/finances/transactions")
-    ApiResponse<Void> createTransaction(
+    ApiResponse<CreatedTransactionResponse> createTransaction(
             @RequestHeader("X-User-Id") Long userId,
             @RequestBody TransactionRequest request);
+
+    @DeleteMapping("/api/v1/finances/transactions/{id}")
+    ApiResponse<Void> deleteTransaction(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-User-Id") Long userId);
 
     @PostMapping("/api/v1/finances/transactions/duplicates-check")
     ApiResponse<List<Integer>> checkDuplicates(

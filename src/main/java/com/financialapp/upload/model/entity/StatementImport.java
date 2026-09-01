@@ -24,12 +24,6 @@ public class StatementImport {
     @Column(name = "file_type", nullable = false, length = 50)
     private String fileType;
 
-    @Column(name = "account_number", length = 100)
-    private String accountNumber;
-
-    @Column(name = "period_key", length = 50)
-    private String periodKey;
-
     @Column(name = "original_name")
     private String originalName;
 

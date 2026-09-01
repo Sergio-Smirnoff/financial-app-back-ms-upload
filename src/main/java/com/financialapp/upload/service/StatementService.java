@@ -198,8 +198,6 @@ public class StatementService {
         StatementImport statementImport = StatementImport.builder()
                 .userId(userId)
                 .fileType(fileType != null ? fileType.name() : "UNKNOWN")
-                .accountNumber("N/A")
-                .periodKey(UUID.randomUUID().toString())
                 .minioPath(path)
                 .importedCount(count)
                 .importStatus(ImportStatus.COMPLETED.name())
